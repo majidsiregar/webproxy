@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skema Infrastruktur Web Proxy Portal Berita</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #63708a;
+      --line: #d9deea;
+      --accent: #0f766e;
+      --accent-soft: #dff7f3;
+      --blue: #2563eb;
+      --blue-soft: #e6efff;
+      --orange: #c2410c;
+      --orange-soft: #fff1e8;
+      --violet: #6d28d9;
+      --violet-soft: #f0e9ff;
+      --green: #15803d;
+      --green-soft: #e8f7ed;
+      --shadow: 0 16px 40px rgba(23, 32, 51, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(246, 247, 251, 0.94)),
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34rem);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(92px, 1fr));
+      gap: 10px;
+      min-width: 330px;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 650;
+    }
+
+    .diagram-shell {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      scrollbar-color: var(--line) transparent;
+      scrollbar-width: thin;
+    }
+
+    .mermaid {
+      min-width: 860px;
+      padding: 28px;
+    }
+
+    .mermaid svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .scroll-hint {
+      display: none;
+      margin: 10px 2px 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 650;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .layer {
+      min-height: 172px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 10px 26px rgba(23, 32, 51, 0.05);
+    }
+
+    .layer h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .layer ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .layer li + li {
+      margin-top: 7px;
+    }
+
+    .edge .dot {
+      background: var(--orange);
+    }
+
+    .proxy .dot {
+      background: var(--blue);
+    }
+
+    .app .dot {
+      background: var(--violet);
+    }
+
+    .data .dot {
+      background: var(--green);
+    }
+
+    .external .dot {
+      background: var(--accent);
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .note {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .note h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    @media (max-width: 920px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .legend {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .notes {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        padding: 22px 0 40px;
+      }
+
+      header {
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 9vw, 2.5rem);
+        line-height: 1.08;
+      }
+
+      .intro {
+        margin-top: 12px;
+        font-size: 0.96rem;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .legend,
+      .notes {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        min-height: 68px;
+        padding: 11px 10px;
+      }
+
+      .stat strong {
+        font-size: 1.35rem;
+      }
+
+      .stat span {
+        font-size: 0.76rem;
+      }
+
+      .mermaid {
+        min-width: 720px;
+        padding: 18px;
+      }
+
+      .scroll-hint {
+        display: block;
+      }
+
+      .layer {
+        min-height: 0;
+        padding: 16px;
+      }
+
+      .note {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      main {
+        width: min(100% - 16px, 1180px);
+      }
+
+      .eyebrow {
+        font-size: 0.72rem;
+      }
+
+      .stat {
+        padding: 10px 8px;
+      }
+
+      .stat span {
+        font-size: 0.7rem;
+      }
+
+      .mermaid {
+        min-width: 680px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">Web Proxy Project Infrastructure</p>
+        <h1>Skema web-based untuk 5 portal berita, admin, API, dan cloud edge.</h1>
+        <p class="intro">
+          Visualisasi ini mengikuti proposal: Cloudflare sebagai edge, nginx sebagai reverse proxy
+          dan load balancer, backend NestJS, admin dashboard, 5 portal Next.js, PostgreSQL, MinIO,
+          serta AI generation service untuk membuat variasi konten.
+        </p>
+      </div>
+      <section class="stats" aria-label="Ringkasan kapasitas proyek">
+        <div class="stat">
+          <strong>6</strong>
+          <span>Domain aktif</span>
+        </div>
+        <div class="stat">
+          <strong>2</strong>
+          <span>VPS produksi</span>
+        </div>
+        <div class="stat">
+          <strong>7</strong>
+          <span>Aplikasi web</span>
+        </div>
+      </section>
+    </header>
+
+    <section class="diagram-shell" aria-label="Diagram arsitektur infrastruktur">
+      <pre class="mermaid">
+flowchart TB
+  subgraph access["Public Access"]
+    direction LR
+    reader[/"Pembaca<br/>End users"/]
+    admin[/"Admin<br/>Content creator"/]
+  end
+
+  subgraph domains["Domain Layer · 6 Domain"]
+    direction LR
+    portalDomains["5 Portal Domains<br/>portal-1.id · portal-2.id · portal-3.id<br/>portal-4.id · portal-5.id"]
+    adminDomain["Admin Domain<br/>admin.domain.id"]
+  end
+
+  cloudflare["Cloudflare Edge<br/>SSL · WAF · CDN · DDoS Protection"]
+  ingress["nginx Ingress<br/>Reverse Proxy · Domain Routing · Load Balancer"]
+
+  subgraph hosting["Production Hosting · 2 VPS · 16 GB RAM each"]
+    direction LR
+    subgraph vps1["VPS 1 · App Node A"]
+      direction TB
+      nodeAWeb["Web Runtime A<br/>5 Portal Next.js<br/>Admin Dashboard"]
+      nodeAApi["Backend API A<br/>NestJS · REST · RBAC<br/>/api/healthz"]
+    end
+
+    subgraph vps2["VPS 2 · App Node B"]
+      direction TB
+      nodeBWeb["Web Runtime B<br/>5 Portal Next.js<br/>Admin Dashboard"]
+      nodeBApi["Backend API B<br/>NestJS · REST · RBAC<br/>/api/healthz"]
+    end
+  end
+
+  subgraph data["Shared Data & Storage"]
+    direction LR
+    postgres[("PostgreSQL<br/>users · articles · portals · media")]
+    minio[("MinIO<br/>images · media · backups")]
+    backup["Backup Jobs<br/>12 bulan retention"]
+  end
+
+  subgraph external["External Services"]
+    direction LR
+    ai["AI Generation Service<br/>1 prompt ke 5 artikel"]
+    monitor["Monitoring<br/>logs · uptime · health checks"]
+  end
+
+  reader --> portalDomains
+  admin --> adminDomain
+  portalDomains --> cloudflare
+  adminDomain --> cloudflare
+  cloudflare --> ingress
+
+  ingress -->|"balanced traffic"| vps1
+  ingress -->|"balanced traffic"| vps2
+
+  nodeAWeb <-->|"article API"| nodeAApi
+  nodeBWeb <-->|"article API"| nodeBApi
+  nodeAApi --> postgres
+  nodeBApi --> postgres
+  nodeAApi --> minio
+  nodeBApi --> minio
+  nodeAApi --> ai
+  nodeBApi --> ai
+  postgres --> backup
+  minio --> backup
+  cloudflare --> monitor
+  nodeAApi --> monitor
+  nodeBApi --> monitor
+
+  classDef user fill:#fff7ed,stroke:#c2410c,color:#172033,stroke-width:1px;
+  classDef edge fill:#fff1e8,stroke:#c2410c,color:#172033,stroke-width:1px;
+  classDef proxy fill:#e6efff,stroke:#2563eb,color:#172033,stroke-width:1px;
+  classDef app fill:#f0e9ff,stroke:#6d28d9,color:#172033,stroke-width:1px;
+  classDef data fill:#e8f7ed,stroke:#15803d,color:#172033,stroke-width:1px;
+  classDef external fill:#dff7f3,stroke:#0f766e,color:#172033,stroke-width:1px;
+
+  class reader,admin user;
+  class portalDomains,adminDomain,cloudflare edge;
+  class ingress proxy;
+  class nodeAWeb,nodeAApi,nodeBWeb,nodeBApi app;
+  class postgres,minio,backup data;
+  class ai,monitor external;
+      </pre>
+    </section>
+    <p class="scroll-hint">Geser diagram ke samping untuk melihat seluruh arsitektur di layar kecil.</p>
+
+    <section class="legend" aria-label="Ringkasan layer infrastruktur">
+      <article class="layer edge">
+        <h2><span class="dot"></span>Edge Layer</h2>
+        <ul>
+          <li>6 domain: 5 portal dan 1 admin.</li>
+          <li>Cloudflare untuk SSL, WAF, CDN, dan DDoS protection.</li>
+          <li>Traffic filtering sebelum request masuk ke VPS.</li>
+        </ul>
+      </article>
+
+      <article class="layer proxy">
+        <h2><span class="dot"></span>Proxy Layer</h2>
+        <ul>
+          <li>nginx sebagai reverse proxy per domain.</li>
+          <li>Upstream/load balancing ke service aplikasi.</li>
+          <li>Routing admin, portal, dan API dari satu entrypoint.</li>
+        </ul>
+      </article>
+
+      <article class="layer app">
+        <h2><span class="dot"></span>App Layer</h2>
+        <ul>
+          <li>5 portal Next.js 14 dengan karakter desain berbeda.</li>
+          <li>Admin dashboard React + Vite + Shadcn/UI.</li>
+          <li>Backend API NestJS dengan REST, auth, dan RBAC.</li>
+        </ul>
+      </article>
+
+      <article class="layer data">
+        <h2><span class="dot"></span>Data Layer</h2>
+        <ul>
+          <li>PostgreSQL untuk users, articles, portals, dan media metadata.</li>
+          <li>MinIO untuk gambar, media upload, dan backup object.</li>
+          <li>Backup PostgreSQL dengan retensi 12 bulan.</li>
+        </ul>
+      </article>
+
+      <article class="layer external">
+        <h2><span class="dot"></span>External Service</h2>
+        <ul>
+          <li>AI generation service untuk membuat 5 versi artikel.</li>
+          <li>Monitoring health check, logs, dan uptime.</li>
+          <li>Endpoint utama: <code>/api/healthz</code>.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="notes" aria-label="Catatan alur sistem">
+      <article class="note">
+        <h2>Alur Generate Konten</h2>
+        <p>
+          Admin menulis prompt dan mengunggah gambar melalui dashboard. Backend memanggil AI generation service,
+          menyimpan artikel ke PostgreSQL, menyimpan media ke MinIO, lalu menerbitkan konten ke
+          portal yang sesuai.
+        </p>
+      </article>
+      <article class="note">
+        <h2>Alur Pembaca</h2>
+        <p>
+          Pembaca mengakses domain portal. Request melewati Cloudflare, diteruskan ke nginx,
+          lalu diarahkan ke portal Next.js yang mengambil data artikel dari Backend API.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "strict",
+      theme: "base",
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 46,
+        rankSpacing: 54
+      },
+      themeVariables: {
+        fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
+        primaryTextColor: "#172033",
+        lineColor: "#63708a",
+        clusterBkg: "#f8fafc",
+        clusterBorder: "#d9deea"
+      }
+    });
+  </script>
+</body>
+</html>
